@@ -3,12 +3,13 @@ package src.sw.app;
 import java.awt.EventQueue;
 
 import sw.app.gui.view.SixesWildJFrame;
+import sw.builder.gui.layout.LevelBuilder;
 import sw.builder.gui.layout.LevelBuilderJFrame;
 
 
 public class ApplicationLevelBuilder {
 	
-	private LevelBuilderJFrame app;
+	private LevelBuilder app;
 
 	/**
 	 * Launch the application.
@@ -37,7 +38,7 @@ public class ApplicationLevelBuilder {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		app = new LevelBuilderJFrame();
+		app = new LevelBuilder();
 		//app.setBounds(100, 100, 450, 300);
 		//app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
