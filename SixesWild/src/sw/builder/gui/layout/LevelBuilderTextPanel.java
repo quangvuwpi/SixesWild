@@ -164,6 +164,23 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 			}
 		}	
 	}
+	
+	Point nextPoint(Point p) {
+		if (board.isValidPoint(p)) {
+			Point next = new Point();
+			if (board.isValidX(p.x + 1)) {
+				next.x = p.x + 1;
+				next.y = p.y;
+			} else if (board.isValidY(p.y + 1)) {
+				next.x = 0;
+				next.y = p.y + 1;
+			} else {
+				next = null;
+			}
+			return next;
+		}
+		return null;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -199,28 +216,32 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 			
 			if (e.getKeyChar() == '\n') {
 				updateBoard();				
-			} 
-//			else if (pos == 0) {
-//				int val = Integer.valueOf(String.valueOf(e.getKeyChar()));
-//				int mul = Integer.valueOf(tf.getText().split("/")[1]);
-//				String newStr = String.format("%d/%d", val, mul);
-//				tf.setText("");
-//				tf.setText(newStr);
-//				tf.setCaretPosition(2);
-//				newStr = tf.getText();
-//			} else if (pos == 2) {
-//				int mul = Integer.valueOf(String.valueOf(e.getKeyChar()));
-//				int val = Integer.valueOf(tf.getText().split("/")[0]);
-//				String newStr = String.format("%d/%d", val, mul);
-//				tf.setText(newStr);
-//				
-//				for (Point p : textFields.keySet()) {
-//					if (textFields.get(p) == tf) {						
-//						Point next = nextPoint(p);
-//						textFields.get(next).requestFocus();
-//					}
-//				}
-//			}
+			} else if (pos == 0 && String.valueOf(e.getKeyChar()).matches("[0-9]")) {
+				int val = Integer.valueOf(String.valueOf(e.getKeyChar()));
+				int mul = Integer.valueOf(tf.getText().split("/")[1]);
+				String newStr = String.format("%d/%d", val, mul);				
+				tf.setText(newStr);
+				tf.setCaretPosition(2);
+				e.consume();
+			} else if (pos == 2 && String.valueOf(e.getKeyChar()).matches("[0-9]")) {
+				e.consume();
+				int mul = Integer.valueOf(String.valueOf(e.getKeyChar()));
+				int val = Integer.valueOf(tf.getText().split("/")[0]);
+				String newStr = String.format("%d/%d", val, mul);
+				tf.setText(newStr);
+				
+				for (Point p : textFields.keySet()) {
+					if (textFields.get(p) == tf) {						
+						Point next = nextPoint(p);
+						if (next != null) {
+							textFields.get(next).requestFocus();							
+						} else {							
+							textFields.get(new Point(0,0)).requestFocus();
+						}
+						break;
+					}
+				}				
+			}
 		}
 
 		@Override
@@ -234,24 +255,7 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 			// TODO Auto-generated method stub
 			
 		}		
-	}
-	
-	Point nextPoint(Point p) {
-		if (board.isValidPoint(p)) {
-			Point next = new Point();
-			if (board.isValidX(p.x + 1)) {
-				next.x = p.x + 1;
-				next.y = p.y;
-			} else if (board.isValidY(p.y + 1)) {
-				next.x = 0;
-				next.y = p.y + 1;
-			} else {
-				next = null;
-			}
-			return next;
-		}
-		return null;
-	}
+	}	
 	
 	/** Restrict allowable character in each text field to 3 */
 	private class FieldFilter extends DocumentFilter {
@@ -284,7 +288,7 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 		public void replace(FilterBypass arg0, int arg1, int arg2, String arg3,
 				AttributeSet arg4) throws BadLocationException {
 			// TODO Auto-generated method stub
-			if (arg3.length() <= 3) {
+			if (arg3.length() == 3) {
 				super.replace(arg0, arg1, arg2, arg3, arg4);
 			}			
 		}
