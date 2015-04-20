@@ -32,7 +32,7 @@ import sw.common.model.entity.Board;
 import sw.common.model.entity.Tile;
 import sw.common.system.factory.TileFactory;
 
-public class LevelBuilderTextPanel extends JPanel implements ActionListener {
+public class LevelBuilderTextPanel extends JPanel {
 
 	Board board;
 	HashMap<Point, JTextField> textFields = new HashMap<Point, JTextField>();
@@ -88,10 +88,8 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 			for (int y = 0; y < size.height; y++) {					
 				Point p = new Point(x, y);
 				
-				JTextField field = new JTextField();
-				
-				Tile t = board.getTile(p);
-				//field.setText(String.format("%d/%d", t.getValue(), t.getMultiplier()));
+				JTextField field = new JTextField();				
+						
 				field.setHorizontalAlignment(JTextField.CENTER);
 				
 				field.setBounds(xPos, yPos, txtSize.width, txtSize.height);
@@ -113,9 +111,7 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 		}
 		
 		updateTextField();
-		updateBoard();
-		
-		//this.addKeyListener(new KeyFilter());
+		updateBoard();		
 	}
 	
 	public void updateTextField() {
@@ -181,12 +177,8 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 		}
 		return null;
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		updateBoard();		
-	}
 	
+	/** Update board when we done editing a text field */
 	private class FieldFocusListener implements FocusListener {
 
 		@Override
@@ -202,12 +194,12 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 		
 	}
 	
+	/** Typing to automatically go to the next text field */
 	private class KeyFilter implements KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent e) {			
 			process(e);
-			//e.consume();
 		}
 		
 		void process(KeyEvent e) {
@@ -217,12 +209,12 @@ public class LevelBuilderTextPanel extends JPanel implements ActionListener {
 			if (e.getKeyChar() == '\n') {
 				updateBoard();				
 			} else if (pos == 0 && String.valueOf(e.getKeyChar()).matches("[0-9]")) {
+				e.consume();
 				int val = Integer.valueOf(String.valueOf(e.getKeyChar()));
 				int mul = Integer.valueOf(tf.getText().split("/")[1]);
 				String newStr = String.format("%d/%d", val, mul);				
 				tf.setText(newStr);
-				tf.setCaretPosition(2);
-				e.consume();
+				tf.setCaretPosition(2);				
 			} else if (pos == 2 && String.valueOf(e.getKeyChar()).matches("[0-9]")) {
 				e.consume();
 				int mul = Integer.valueOf(String.valueOf(e.getKeyChar()));

@@ -305,4 +305,9 @@ public class BoardPanel extends JPanel implements IBoardPanel, ActionListener {
 		}
 	}
 
+	@Override
+	public IResourceManager getResManager() {
+		return resManager;
+	}
+
 }

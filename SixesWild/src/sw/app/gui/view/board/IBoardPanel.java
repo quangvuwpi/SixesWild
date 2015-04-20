@@ -9,6 +9,7 @@ import sw.common.model.entity.IBoard;
 import sw.common.model.entity.Level;
 import sw.common.system.manager.IBoardLocationManager;
 import sw.common.system.manager.IBoardSelectionManager;
+import sw.common.system.manager.IResourceManager;
 
 /** Interface for BoardPanel */
 public interface IBoardPanel extends IView {
@@ -35,7 +36,7 @@ public interface IBoardPanel extends IView {
 	/**
 	 * @return the Board interface
 	 */
-	IBoard getBoard();
+	IBoard getBoard();	
 	
 	/**
 	 * @return the Board location manager interface
@@ -47,6 +48,11 @@ public interface IBoardPanel extends IView {
 	 */
 	IBoardSelectionManager getSelector();
 
+	/**
+	 * @return the resource manager interface
+	 */
+	IResourceManager getResManager();
+	
 	/**
 	 * @param point the XY coordinate of the panel
 	 * @return the board position

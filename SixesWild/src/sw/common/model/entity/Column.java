@@ -156,7 +156,7 @@ public class Column {
 		Iterator<Square> si = col.iterator();
 		while (si.hasNext()) {
 			Square s = si.next();
-			if (s.isEmpty()) {
+			if (!s.isEmpty()) {
 				s.setTile(null);
 			}
 		}

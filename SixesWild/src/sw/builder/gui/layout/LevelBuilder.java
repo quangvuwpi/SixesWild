@@ -53,11 +53,11 @@ public class LevelBuilder extends JFrame implements ActionListener {
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(boardPanel, GroupLayout.PREFERRED_SIZE, 450, GroupLayout.PREFERRED_SIZE)
+					.addComponent(boardPanel, GroupLayout.PREFERRED_SIZE, 350, GroupLayout.PREFERRED_SIZE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(50)
-							.addComponent(textPanel, GroupLayout.PREFERRED_SIZE, 350, GroupLayout.PREFERRED_SIZE)
+							.addComponent(textPanel, GroupLayout.PREFERRED_SIZE, 360, GroupLayout.PREFERRED_SIZE)
 							.addContainerGap(208, Short.MAX_VALUE))
 						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 							.addGap(150)
@@ -70,10 +70,10 @@ public class LevelBuilder extends JFrame implements ActionListener {
 					.addGap(10)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(textPanel, GroupLayout.PREFERRED_SIZE, 350, GroupLayout.PREFERRED_SIZE)
+							.addComponent(textPanel, GroupLayout.PREFERRED_SIZE, 360, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
 							.addComponent(btnPreview, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-						.addComponent(boardPanel, GroupLayout.PREFERRED_SIZE, 450, GroupLayout.PREFERRED_SIZE))
+						.addComponent(boardPanel, GroupLayout.PREFERRED_SIZE, 350, GroupLayout.PREFERRED_SIZE))
 						.addContainerGap(20, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
@@ -97,8 +97,7 @@ public class LevelBuilder extends JFrame implements ActionListener {
 		
 		board     = lvl.getGame().getBoard();
 		
-		boardPanel = new BoardPanel();
-		//boardPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+		boardPanel = new BoardPanel();		
 		boardPanel.setSize(new Dimension(450, 450));
 		
 		boardPanel.setLevel(lvl);

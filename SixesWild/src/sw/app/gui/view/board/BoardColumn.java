@@ -64,7 +64,7 @@ public class BoardColumn extends JPanel {
 		this.colIdx = i;
 		this.column = boardPanel.board.getColumn(i);
 
-		this.rm = boardPanel.resManager;
+		this.rm = boardPanel.getResManager();
 		this.imgSize = rm.getImageSize();
 
 		// Clear current display
@@ -200,8 +200,9 @@ public class BoardColumn extends JPanel {
 
 		// Tries to load the image from IResourceManager, if that doesn't work
 		// then use common image
-		String path = crm.getImage(t);
+		String path = rm.getImage(t);
 		if (!im.containsKey(path)) {
+			path = crm.getImage(t);
 			img = new ImageIcon(BoardColumn.class.getResource(path)).getImage();
 			if (img == null) {
 				img = new ImageIcon(BoardColumn.class.getResource(crm

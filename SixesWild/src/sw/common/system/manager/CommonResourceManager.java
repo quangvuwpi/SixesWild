@@ -17,11 +17,11 @@ import sw.common.system.factory.TileFactory;
  */
 public class CommonResourceManager implements IResourceManager {
 	
-	HashMap<Tile, String> tileMap = new HashMap<Tile, String>();
+	protected HashMap<Tile, String> tileMap = new HashMap<Tile, String>();
 	
-	Dimension imgSize = new Dimension(50,50);
+	protected Dimension imgSize = new Dimension(50,50);
 	
-	String imagePath = "/sw/resource/image/";
+	protected String imagePath = "/sw/resource/image/";
 
 	/* (non-Javadoc)
 	 * @see sw.common.system.manager.IResourceManager#getImage()
@@ -48,11 +48,11 @@ public class CommonResourceManager implements IResourceManager {
 		return getTileImage(tile.getValue());
 	}
 	
-	String getUnusedImage(int i) {
+	protected String getUnusedImage(int i) {
 		return imagePath.concat(String.format("%d_unused.png", i));
 	}
 	
-	String getTileImage(int i) {
+	protected String getTileImage(int i) {
 		return imagePath.concat(String.format("tile_%d.png", i));
 	}
 
