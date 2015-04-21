@@ -3,12 +3,14 @@ package sw.builder.gui.layout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+
 import sw.app.gui.view.board.BoardPanel;
 import sw.common.model.controller.BoardController;
 import sw.common.model.controller.IMode;
@@ -16,6 +18,7 @@ import sw.common.model.entity.Board;
 import sw.common.model.entity.Game;
 import sw.common.model.entity.Level;
 import sw.common.model.entity.Statistics;
+import sw.common.system.factory.TileFrequency;
 import sw.common.system.manager.CommonResourceManager;
 import sw.common.system.manager.IResourceManager;
 
@@ -39,7 +42,7 @@ public class LevelBuilder extends JFrame implements ActionListener {
 		initializePanel();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 900, 525);
+		setBounds(100, 100, 900, 550);
 		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -93,7 +96,7 @@ public class LevelBuilder extends JFrame implements ActionListener {
 			}
 		};
 		
-		Level lvl = new Level(1, new Game(), new Statistics(), mode);
+		Level lvl = new Level(1, new Game(), new Statistics(), mode, new TileFrequency());
 		
 		board     = lvl.getGame().getBoard();
 		

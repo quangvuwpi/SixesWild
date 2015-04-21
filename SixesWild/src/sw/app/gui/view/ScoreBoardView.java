@@ -20,6 +20,7 @@ import sw.app.gui.controller.MainMenuController;
 import sw.common.model.entity.Game;
 import sw.common.model.entity.Level;
 import sw.common.model.entity.Statistics;
+import sw.common.system.factory.TileFrequency;
 import sw.mode.Release;
 
 import javax.swing.SwingConstants;
@@ -74,7 +75,7 @@ public class ScoreBoardView extends JPanel implements IView {
 		btnNewButton_1 = new JButton("Add score test");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Level newLevel = new Level(count, new Game(), new Statistics(), new Release());
+				Level newLevel = new Level(count, new Game(), new Statistics(), new Release(), new TileFrequency());
 				addLevelStats(newLevel);
 			}
 		});

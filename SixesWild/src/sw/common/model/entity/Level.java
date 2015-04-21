@@ -6,6 +6,7 @@
 package sw.common.model.entity;
 
 import sw.common.model.controller.IMode;
+import sw.common.system.factory.TileFrequency;
 
 /** The model for an arbitrary game level */
 public class Level {
@@ -14,12 +15,14 @@ public class Level {
 	Statistics winStats;
 	IMode mode;
 	int levelNum;
+	TileFrequency freq;
 	
-	public Level(int levelNum, Game game, Statistics winStats, IMode mode) {
+	public Level(int levelNum, Game game, Statistics winStats, IMode mode, TileFrequency freq) {
 		this.game = game;
 		this.winStats = winStats;
 		this.mode = mode;
 		this.levelNum = levelNum;
+		this.freq = freq;
 	}
 
 	/**
@@ -53,6 +56,10 @@ public class Level {
 	
 	public void initialize() {
 		
+	}
+	
+	public TileFrequency getTileFrequency() {
+		return freq;
 	}
 	
 	public boolean hasWon() {

@@ -8,12 +8,10 @@ package sw.common.system.factory;
 import java.util.HashMap;
 import java.util.Random;
 
+import sw.common.model.entity.Tile;
+
 /** The model to describe the frequency of each value and multiplier appearing in the level */
 public class TileFrequency {
-	
-	/** Default max value and multiplier for Sixes Wild */
-	int maxVal = 6;
-	int maxMul = 3;
 	
 	/** Probability of each value to appear in the level */
 	HashMap<Integer, Double> valFreq = new HashMap<Integer, Double>();
@@ -24,59 +22,115 @@ public class TileFrequency {
 	/** Random number generator */
 	static Random rand = new Random();
 	
-	public TileFrequency() {
-		double val  = 100.0 / maxVal; // Equal frequency for each value
-		double mult = 100.0 / maxMul; // Equal frequency for each multiplier
-		double sum;                 // Keep track of percentile for each subsequent value
+	public TileFrequency() {		
+		double val  = 100.0 / Tile.maxValue;      // Equal frequency for each value
+		double mult = 100.0 / Tile.maxMultiplier; // Equal frequency for each multiplier
 		
-		// Set freq for each value		
-		sum = 0;
-		for (int i = 0; i <= maxVal; i++) {			
-			valFreq.put(i, sum);
-			sum += val;
+		HashMap<Integer, Double> vhm = new HashMap<Integer, Double>();
+		for (int i = Tile.minValue; i <= Tile.maxValue; i++) {
+			vhm.put(i, val);
 		}
 		
-		// Set freq for each multiplier value		
-		sum = 0;
-		for (int i = 0; i <= maxMul; i++) {			
-			mulFreq.put(i, sum);
-			sum += mult;
+		HashMap<Integer, Double> mhm = new HashMap<Integer, Double>();
+		for (int i = Tile.minMultiplier; i <= Tile.maxMultiplier; i++) {
+			mhm.put(i, mult);
 		}
+		
+		setValFreq(vhm);
+		setMulFreq(mhm);
 	}
 	
 	public TileFrequency(HashMap<Integer, Double> valFreq, HashMap<Integer, Double> mulFreq) {
-		this.valFreq = valFreq;
-		this.mulFreq = mulFreq;
+		if (!setValFreq(valFreq) || !setMulFreq(mulFreq)) {
+			throw new IllegalArgumentException("Invalid frequency setting!");
+		}
+	}
+	
+	public boolean setValFreq(HashMap<Integer, Double> valFreq) {
+		double sum = 0;
+		
+		this.valFreq.clear();
+		this.valFreq.put(0, 0.0);
+		
+		for (int i = Tile.minValue; i <= Tile.maxValue; i++) {
+			if (valFreq.containsKey(i)) {
+				sum += valFreq.get(i);
+				if (sum > 100.00) {
+					this.valFreq.put(i, Math.floor(sum)); // round down
+				} else {
+					this.valFreq.put(i, sum); // save the percentile
+				}
+			} else {
+				break;
+			}
+		}
+		// the total must be 100
+		if (Math.floor(sum) != 100) {
+			valFreq.clear();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean setMulFreq(HashMap<Integer, Double> mulFreq) {
+		double sum = 0;
+		
+		this.mulFreq.clear();
+		this.mulFreq.put(0, 0.0);
+		
+		for (int i = Tile.minMultiplier; i <= Tile.maxMultiplier; i++) {
+			if (mulFreq.containsKey(i)) {
+				sum += mulFreq.get(i);
+				if (sum > 100.00) {
+					//this.mulFreq.put(i, Math.floor(sum)); // round down
+					this.mulFreq.put(i, 100.00); // round down
+				} else {
+					this.mulFreq.put(i, sum); // save the percentile
+				}
+				
+			} else {
+				break;
+			}
+		}
+		// the total must be 100
+		if (Math.round(sum) != 100.00) {
+			mulFreq.clear();
+			return false;
+		}
+		return true;
 	}
 	
 	/**
 	 * @param i the Tile value
 	 * @return frequency of i appearing in the level
 	 */
-	public double getValFreq(int i) {
-		double f = 0.0;
+	double getValFreq(int i) {
 		try {
-			f = valFreq.get(i);
+			return valFreq.get(i);
 		} catch (IndexOutOfBoundsException e) {
-			//e.printStackTrace();			
-		}			
-		return f;		 
+			return 0.0;		
+		} 
+	}
+	
+	public double getValPercent(int i) {
+		return getValFreq(i) - getValFreq(i - 1);
 	}
 	
 	/**
 	 * @param i the Tile multiplier value
 	 * @return frequency of i appearing in the level
 	 */
-	public double getMulFreq(int i) {
-		double f = 0.0;
+	double getMulFreq(int i) {
 		try {
-			f = mulFreq.get(i);
+			return mulFreq.get(i);
 		} catch (IndexOutOfBoundsException e) {
-			//e.printStackTrace();			
-		}			
-		return f;
+			return 0.0;			
+		}
 	}
 	
+	public double getMulPercent(int i) {
+		return getMulFreq(i) - getMulFreq(i - 1);
+	}
 	
 	/**
 	 * @return the next value to appear
@@ -85,7 +139,7 @@ public class TileFrequency {
 		double f0, f1;
 		double freq = rand.nextDouble() * 100;
 		
-		for (int i = 1; i <= maxVal; i++) {
+		for (int i = Tile.minValue; i <= Tile.maxValue; i++) {
 			f1 = getValFreq(i);
 			f0 = getValFreq(i-1);
 			if (freq > f0 && freq < f1) {
@@ -102,7 +156,7 @@ public class TileFrequency {
 		double f0, f1;
 		double freq = rand.nextDouble() * 100;
 		
-		for (int i = 1; i <= maxMul; i++) {
+		for (int i = Tile.minMultiplier; i <= Tile.maxMultiplier; i++) {
 			f1 = getMulFreq(i);
 			f0 = getMulFreq(i-1);
 			if (freq > f0 && freq < f1) {

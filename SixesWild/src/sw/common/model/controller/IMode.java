@@ -11,6 +11,13 @@ import sw.common.system.manager.IResourceManager;
 
 /** Interface for every game mode */
 public interface IMode {
+	
+	static enum MODE {
+		PUZZLE,
+		LIGHTNING,
+		ELIMINATION,
+		RELEASE
+	}
 
 	IResourceManager getResourceManger();
 	

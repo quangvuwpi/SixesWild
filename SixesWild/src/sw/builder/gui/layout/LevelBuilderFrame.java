@@ -17,6 +17,7 @@ import sw.common.model.entity.Game;
 import sw.common.model.entity.Level;
 import sw.common.model.entity.Statistics;
 import sw.common.model.entity.Tile;
+import sw.common.system.factory.TileFrequency;
 import sw.common.system.manager.CommonResourceManager;
 import sw.common.system.manager.IResourceManager;
 
@@ -69,7 +70,7 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(btnLoad, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)))
 					.addGap(18)
-					.addComponent(lvlPanel, GroupLayout.PREFERRED_SIZE, 485, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lvlPanel, GroupLayout.PREFERRED_SIZE, 500, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(386, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -77,7 +78,7 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(lvlPanel, GroupLayout.PREFERRED_SIZE, 450, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lvlPanel, GroupLayout.PREFERRED_SIZE, 455, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(boardPanel, GroupLayout.PREFERRED_SIZE, 350, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
@@ -103,7 +104,7 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 			}
 		};
 		
-		Level lvl = new Level(1, new Game(), new Statistics(), mode);
+		Level lvl = new Level(1, new Game(), new Statistics(), mode, new TileFrequency());
 		
 		board     = lvl.getGame().getBoard();
 		
@@ -115,6 +116,7 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 		boardPanel.initialize();		
 		
 		lvlPanel  = new LevelBuilderPanel(board);
+		lvlPanel.setFrequency(lvl.getTileFrequency());
 		
 		btnSave = new JButton("Save");
 		btnSave.addActionListener(this);

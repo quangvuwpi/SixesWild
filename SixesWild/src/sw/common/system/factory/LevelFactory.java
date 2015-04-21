@@ -16,6 +16,6 @@ import sw.common.model.entity.Statistics;
 public class LevelFactory {
 
 	public static Level getLevel(int lvl, IMode mode, Statistics winStats) {
-		return new Level(lvl, new Game(), winStats, mode);
+		return new Level(lvl, new Game(), winStats, mode, new TileFrequency());
 	}
 }
