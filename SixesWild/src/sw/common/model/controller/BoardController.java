@@ -8,6 +8,7 @@ package sw.common.model.controller;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.Queue;
 
@@ -39,82 +40,86 @@ public abstract class BoardController extends MouseAdapter {
 		this.selector = bp.getSelector();
 	}
 	
-	boolean select(Point p) {
+	protected boolean select(Point p) {
 		return selector.select(p);
 	}
+	
+	protected Point getPoint(MouseEvent e) {
+		return panel.xyToPoint(e.getPoint());
+	}
 
-	Queue<Square> getSelectedSquare() {
+	protected Queue<Square> getSelectedSquare() {
 		return selector.getSelectedSquare();
 	}
 	
-	Queue<Tile> getSelectedTile() {
+	protected Queue<Tile> getSelectedTile() {
 		return selector.getSelectedTile();
 	}
 
-	boolean clearSelection() {
+	protected boolean clearSelection() {
 		return selector.clearSelection();
 	}
 	
-	void removeSelection() {
+	protected void removeSelection() {
 		Iterator<Tile> ti = getSelectedTile().iterator();
 		while (ti.hasNext()) {
 			boardRemove(getPoint(ti.next()));
 		}
 	}
 
-	public boolean isValidX(int x) {
+	protected boolean isValidX(int x) {
 		return locator.isValidX(x);
 	}
 
-	public boolean isValidY(int y) {
+	protected boolean isValidY(int y) {
 		return locator.isValidY(y);
 	}
 
-	public boolean isValidPoint(Point p) {
+	protected boolean isValidPoint(Point p) {
 		return locator.isValidPoint(p);
 	}
 
-	public Point getPoint(Tile tile) {
+	protected Point getPoint(Tile tile) {
 		return locator.getPoint(tile);
 	}
 
-	public Tile getTile(Point p) {
+	protected Tile getTile(Point p) {
 		return locator.getTile(p);
 	}
 
-	public Square getSquare(Point p) {
+	protected Square getSquare(Point p) {
 		return locator.getSquare(p);
 	}
 
-	public Dimension boardSize() {
+	protected Dimension boardSize() {
 		return board.size();
 	}
 
-	public boolean isEmpty(Point p) {
+	protected boolean isEmpty(Point p) {
 		return board.isEmpty(p);
 	}
 
-	public boolean boardRemove(Point p) {
+	protected boolean boardRemove(Point p) {
 		return board.remove(p);
 	}
 
-	boolean boardReplace(Point p, Tile t) {
+	protected boolean boardReplace(Point p, Tile t) {
 		return board.replace(p, t);
 	}
 
-	void boardClear() {
+	protected void boardClear() {
 		board.clear();
 	}
 
-	void boardFill() {
+	protected void boardFill() {
 		board.fill();		
 	}
 
-	void boardPack() {
+	protected void boardPack() {
 		board.pack();
 	}
 
-	int boardCount() {
+	protected int boardCount() {
 		return board.count();
 	}	
 	

@@ -6,6 +6,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JSplitPane;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.HashMap;
@@ -57,6 +58,8 @@ public class LevelBuilderPanel extends JPanel {
 	LevelBuilderTextPanel txtPanel;
 	
 	TileFrequency oriFreq;
+	
+	Point highlight;
 	
 	/**
 	 * Create the panel.
@@ -361,6 +364,17 @@ public class LevelBuilderPanel extends JPanel {
 					.addContainerGap(12, Short.MAX_VALUE))
 		);
 		setLayout(groupLayout);
+	}
+	
+	public void hightlightField(Point p) {
+		highlight = p;
+		txtPanel.hightlightField(p);
+	}
+	
+	public void clearHightlight() {
+		if (highlight != null) {
+			txtPanel.clearHightlight(highlight);
+		}
 	}
 	
 	public void update() {

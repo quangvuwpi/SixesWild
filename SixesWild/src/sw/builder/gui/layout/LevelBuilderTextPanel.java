@@ -1,6 +1,7 @@
 package sw.builder.gui.layout;
 
 import java.awt.AWTKeyStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
@@ -36,6 +37,9 @@ public class LevelBuilderTextPanel extends JPanel {
 
 	Board board;
 	HashMap<Point, JTextField> textFields = new HashMap<Point, JTextField>();
+	
+	Point hightlighted = null;
+	Color bgc = null;
 	
 	/**
 	 * Create the panel.
@@ -161,6 +165,24 @@ public class LevelBuilderTextPanel extends JPanel {
 		}	
 	}
 	
+	void hightlightField(Point p) {
+		if (board.isValidPoint(p)) {
+			hightlighted = p;
+			JTextField tf = textFields.get(p);
+			bgc = tf.getBackground();
+			tf.setBackground(Color.YELLOW);
+		}
+	}
+	
+	void clearHightlight(Point p) {
+		if (hightlighted != null && board.isValidPoint(p)) {
+			JTextField tf = textFields.get(p);
+			if (tf.getBackground().equals(Color.YELLOW)) {
+				tf.setBackground(bgc);
+			}			
+		}
+	}
+	
 	Point nextPoint(Point p) {
 		if (board.isValidPoint(p)) {
 			Point next = new Point();
@@ -183,7 +205,8 @@ public class LevelBuilderTextPanel extends JPanel {
 
 		@Override
 		public void focusGained(FocusEvent arg0) {
-			((JTextField) arg0.getSource()).setCaretPosition(0);
+			clearHightlight(hightlighted);
+			((JTextField) arg0.getSource()).setCaretPosition(0);			
 		}
 
 		@Override

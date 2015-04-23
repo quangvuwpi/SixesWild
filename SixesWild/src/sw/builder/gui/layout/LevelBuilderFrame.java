@@ -1,13 +1,18 @@
 package sw.builder.gui.layout;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 
 import sw.app.gui.view.board.BoardPanel;
 import sw.common.model.controller.BoardController;
@@ -16,18 +21,9 @@ import sw.common.model.entity.Board;
 import sw.common.model.entity.Game;
 import sw.common.model.entity.Level;
 import sw.common.model.entity.Statistics;
-import sw.common.model.entity.Tile;
 import sw.common.system.factory.TileFrequency;
 import sw.common.system.manager.CommonResourceManager;
 import sw.common.system.manager.IResourceManager;
-
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-
-import javax.swing.JButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class LevelBuilderFrame extends JFrame implements ActionListener {
 
@@ -113,7 +109,15 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 		
 		boardPanel.setLevel(lvl);
 		boardPanel.disableAnimation();
-		boardPanel.initialize();		
+		boardPanel.initialize();
+		boardPanel.setBoardController(new BoardController(boardPanel) {			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				lvlPanel.clearHightlight();
+				Point p = getPoint(arg0);
+				lvlPanel.hightlightField(p);
+			}			
+		});
 		
 		lvlPanel  = new LevelBuilderPanel(board);
 		lvlPanel.setFrequency(lvl.getTileFrequency());
@@ -157,4 +161,5 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 		}	
 		
 	}
+	
 }
