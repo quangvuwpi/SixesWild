@@ -1,44 +1,35 @@
 package sw.builder.gui.layout;
 
-import java.awt.AWTKeyStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.DocumentFilter.FilterBypass;
 
 import sw.common.model.entity.Board;
 import sw.common.model.entity.Tile;
-import sw.common.system.factory.TileFactory;
 
 public class LevelBuilderTextPanel extends JPanel {
 
 	Board board;
 	HashMap<Point, JTextField> textFields = new HashMap<Point, JTextField>();
 	
-	Point hightlighted = null;
+	Stack<Point> highlighted = new Stack<Point>();
 	Color bgc = null;
 	
 	/**
@@ -144,38 +135,45 @@ public class LevelBuilderTextPanel extends JPanel {
 		for (int x = 0; x < size.width; x++) {
 			for (int y = 0; y < size.height; y++) {				
 				Point p = new Point(x, y);				
-				try {
-					JTextField field = textFields.get(p);
-					String text = field.getText();
-					
-					String[] data = text.split("/");
-					if (data.length == 2) {
-						int val = Integer.valueOf(text.split("/")[0]);
-						int mul = Integer.valueOf(text.split("/")[1]);
-						
-						Tile t = new Tile(val, mul);
-						board.replace(p, t);
-					} else {
-						updateTextField(p);
-					}
-				} catch (IllegalArgumentException e) {
-					updateTextField(p);
-				}
+				updateBoard(p);
 			}
 		}	
 	}
 	
-	void hightlightField(Point p) {
+	public void updateBoard(Point p) {
 		if (board.isValidPoint(p)) {
-			hightlighted = p;
+			try {
+				JTextField field = textFields.get(p);
+				String text = field.getText();
+				
+				String[] data = text.split("/");
+				if (data.length == 2) {
+					int val = Integer.valueOf(text.split("/")[0]);
+					int mul = Integer.valueOf(text.split("/")[1]);
+					
+					Tile t = new Tile(val, mul);
+					board.replace(p, t);
+				} else {
+					updateTextField(p);
+				}
+			} catch (IllegalArgumentException e) {
+				updateTextField(p);
+			}
+		}
+	}
+	
+	void highlightField(Point p) {
+		if (board.isValidPoint(p)) {
+			highlighted.push(p);
 			JTextField tf = textFields.get(p);
 			bgc = tf.getBackground();
 			tf.setBackground(Color.YELLOW);
 		}
 	}
 	
-	void clearHightlight(Point p) {
-		if (hightlighted != null && board.isValidPoint(p)) {
+	void clearHighlight() {
+		while (!highlighted.isEmpty()) {
+			Point p = highlighted.pop();
 			JTextField tf = textFields.get(p);
 			if (tf.getBackground().equals(Color.YELLOW)) {
 				tf.setBackground(bgc);
@@ -200,19 +198,39 @@ public class LevelBuilderTextPanel extends JPanel {
 		return null;
 	}
 	
+	Point getPoint(JTextField tf) {
+		if (textFields.containsValue(tf)) {
+			Set<Entry<Point, JTextField>> entries = textFields.entrySet();
+			for (Entry<Point, JTextField> entry : entries) {
+				if (entry.getValue() == tf) {
+					return entry.getKey();
+				}
+			}
+		}
+		return null;
+	}
+	
 	/** Update board when we done editing a text field */
 	private class FieldFocusListener implements FocusListener {
 
 		@Override
 		public void focusGained(FocusEvent arg0) {
-			clearHightlight(hightlighted);
-			((JTextField) arg0.getSource()).setCaretPosition(0);			
+			board.clearSelection();
+			clearHighlight();
+			
+			JTextField tf = (JTextField) arg0.getSource();			
+			tf.setCaretPosition(0);
+			
+			Point p = getPoint(tf);
+			if (p != null) {
+				board.select(p);
+			}
+			highlightField(p);
 		}
 
 		@Override
 		public void focusLost(FocusEvent arg0) {
-			// TODO Auto-generated method stub
-			updateBoard();
+			updateBoard(getPoint((JTextField) arg0.getSource()));
 		}
 		
 	}
@@ -292,7 +310,6 @@ public class LevelBuilderTextPanel extends JPanel {
 		@Override
 		public void remove(FilterBypass fb, int offset, int length)
 				throws BadLocationException {
-			// TODO Auto-generated method stub
 			super.remove(fb, offset, length);
 		}
 
@@ -302,7 +319,6 @@ public class LevelBuilderTextPanel extends JPanel {
 		@Override
 		public void replace(FilterBypass arg0, int arg1, int arg2, String arg3,
 				AttributeSet arg4) throws BadLocationException {
-			// TODO Auto-generated method stub
 			if (arg3.length() == 3) {
 				super.replace(arg0, arg1, arg2, arg3, arg4);
 			}			

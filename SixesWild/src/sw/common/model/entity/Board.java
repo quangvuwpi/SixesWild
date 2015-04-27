@@ -186,7 +186,7 @@ public class Board implements IBoardSelectionManager, IBoardLocationManager, IBo
 	 */
 	@Override
 	public boolean isValidPoint(Point p) {
-		return (isValidX(p.x) && isValidY(p.y));
+		return (p != null) && (isValidX(p.x) && isValidY(p.y));
 	}
 	
 	/**

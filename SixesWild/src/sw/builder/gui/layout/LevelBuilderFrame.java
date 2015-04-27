@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -29,6 +31,8 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 
 	private JPanel contentPane;	
 
+	Level level;
+	
 	Board board;
 	BoardPanel boardPanel;
 	LevelBuilderPanel lvlPanel;
@@ -100,27 +104,34 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 			}
 		};
 		
-		Level lvl = new Level(1, new Game(), new Statistics(), mode, new TileFrequency());
+		level = new Level(0, new Game(), new Statistics(), mode, new TileFrequency());
 		
-		board     = lvl.getGame().getBoard();
+		board = level.getGame().getBoard();
 		
 		boardPanel = new BoardPanel();		
 		boardPanel.setSize(new Dimension(450, 450));
 		
-		boardPanel.setLevel(lvl);
+		boardPanel.setLevel(level);
 		boardPanel.disableAnimation();
 		boardPanel.initialize();
 		boardPanel.setBoardController(new BoardController(boardPanel) {			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				lvlPanel.clearHightlight();
+				board.clearSelection();
+				lvlPanel.clearHighlight();
 				Point p = getPoint(arg0);
-				lvlPanel.hightlightField(p);
+				
+				if (p != null) {					
+					if (board.isValidPoint(p)) {
+						board.select(p);
+						lvlPanel.highlightField(p);
+					}
+				}
 			}			
 		});
 		
-		lvlPanel  = new LevelBuilderPanel(board);
-		lvlPanel.setFrequency(lvl.getTileFrequency());
+		lvlPanel = new LevelBuilderPanel(board);
+		lvlPanel.setFrequency(level.getTileFrequency());
 		
 		btnSave = new JButton("Save");
 		btnSave.addActionListener(this);
@@ -130,6 +141,14 @@ public class LevelBuilderFrame extends JFrame implements ActionListener {
 		
 		btnRand = new JButton("Randomize");
 		btnRand.addActionListener(this);
+		
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				board.clearSelection();
+				lvlPanel.clearHighlight();
+			}			
+		});
 	}
 
 	@Override

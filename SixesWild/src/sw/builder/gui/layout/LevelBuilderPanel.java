@@ -3,8 +3,6 @@ package sw.builder.gui.layout;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JSplitPane;
-
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
@@ -16,7 +14,6 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.DocumentFilter.FilterBypass;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -59,8 +56,15 @@ public class LevelBuilderPanel extends JPanel {
 	
 	TileFrequency oriFreq;
 	
-	Point highlight;
+	//Point highlight;
 	
+	// The frequency display mode
+	static enum FREQ_MODE {
+		RATIO,
+		PERCENTAGE		
+	}
+	FREQ_MODE freqMode = FREQ_MODE.PERCENTAGE;
+		
 	/**
 	 * Create the panel.
 	 */
@@ -366,15 +370,15 @@ public class LevelBuilderPanel extends JPanel {
 		setLayout(groupLayout);
 	}
 	
-	public void hightlightField(Point p) {
-		highlight = p;
-		txtPanel.hightlightField(p);
+	public void highlightField(Point p) {
+		//highlight = p;
+		txtPanel.highlightField(p);
 	}
 	
-	public void clearHightlight() {
-		if (highlight != null) {
-			txtPanel.clearHightlight(highlight);
-		}
+	public void clearHighlight() {
+		//if (highlight != null) {
+			txtPanel.clearHighlight();
+		//}
 	}
 	
 	public void update() {
@@ -388,7 +392,10 @@ public class LevelBuilderPanel extends JPanel {
 	
 	public TileFrequency getFrequency() {
 		HashMap<Integer, Double> valFreq = new HashMap<Integer, Double>();
-		try {			
+		HashMap<Integer, Double> mulFreq = new HashMap<Integer, Double>();
+		
+		try {
+			// Set value frequencies
 			double sum = Double.valueOf(val1.getText());
 			valFreq.put(1, Double.valueOf(val1.getText()));
 			
@@ -409,10 +416,9 @@ public class LevelBuilderPanel extends JPanel {
 			} else {
 				// make sure we add up to 100 in case of rounding error
 				valFreq.put(6, Double.valueOf(100.0 - sum));
-			}
+			}			
 			
-			HashMap<Integer, Double> mulFreq = new HashMap<Integer, Double>();
-			
+			// Set multipler frequencies
 			sum = Double.valueOf(mul1.getText());
 			mulFreq.put(1, Double.valueOf(mul1.getText()));
 			
@@ -422,7 +428,84 @@ public class LevelBuilderPanel extends JPanel {
 			if ((sum + Double.valueOf(mul3.getText())) == 100.0) {
 				mulFreq.put(3, Double.valueOf(mul3.getText()));
 			} else {
+				sum -= Double.valueOf(mul3.getText());
 				mulFreq.put(3, Double.valueOf(100.0 - sum));
+			}
+					
+			return new TileFrequency(valFreq, mulFreq);
+		} catch (IllegalArgumentException e) {			
+			return null;
+		}
+	}
+	
+	public TileFrequency getFrequencyRatio() {
+		HashMap<Integer, Double> valFreq = new HashMap<Integer, Double>();
+		HashMap<Integer, Double> mulFreq = new HashMap<Integer, Double>();
+		
+		try {
+			// Set value frequencies
+			int sum = Integer.valueOf(val1.getText());
+			sum += Integer.valueOf(val2.getText());
+			sum += Integer.valueOf(val3.getText());
+			sum += Integer.valueOf(val4.getText());
+			sum += Integer.valueOf(val5.getText());
+			sum += Integer.valueOf(val6.getText());
+			
+			double freq = 100.0 / sum;
+			
+			double vfSum = 0.0;
+			double vfreq = Integer.valueOf(val1.getText()) * freq;
+			vfSum += vfreq;
+			valFreq.put(1, vfreq);
+			
+			vfreq = Integer.valueOf(val2.getText()) * freq;
+			vfSum += vfreq;
+			valFreq.put(2, vfreq);
+			
+			vfreq = Integer.valueOf(val3.getText()) * freq;
+			vfSum += vfreq;
+			valFreq.put(3, vfreq);
+			
+			vfreq = Integer.valueOf(val4.getText()) * freq;
+			vfSum += vfreq;
+			valFreq.put(4, vfreq);
+			
+			vfreq = Integer.valueOf(val5.getText()) * freq;
+			vfSum += vfreq;
+			valFreq.put(5, vfreq);
+			
+			vfreq = Integer.valueOf(val6.getText()) * freq;
+			vfSum += vfreq;
+			if (vfSum == 100.0) {
+				valFreq.put(6, vfreq);
+			} else {
+				vfSum -= vfreq;
+				valFreq.put(6, 100.0 - sum);
+			}
+			
+			// Set multiplier frequencies
+			sum = Integer.valueOf(mul1.getText());
+			sum += Integer.valueOf(mul2.getText());
+			sum += Integer.valueOf(mul3.getText());
+			
+			freq = 100.0 / sum;
+			
+			vfSum = 0.0;
+			vfreq = Integer.valueOf(mul1.getText()) * freq;
+			vfSum += vfreq;
+			mulFreq.put(1, vfreq);
+			
+			vfreq = Integer.valueOf(mul2.getText()) * freq;
+			vfSum += vfreq;
+			mulFreq.put(2, vfreq);
+			
+			vfreq = Integer.valueOf(mul3.getText()) * freq;
+			vfSum += vfreq;
+			if (vfSum == 100.0) {
+				mulFreq.put(3, vfreq);
+			} else {
+				vfSum -= vfreq;
+				mulFreq.put(3, 100.0 - sum);
 			}
 					
 			return new TileFrequency(valFreq, mulFreq);
@@ -434,7 +517,7 @@ public class LevelBuilderPanel extends JPanel {
 	public void setFrequency(TileFrequency freq) {
 		oriFreq = freq;
 		
-		val1.setText(String.format("%03.02f", freq.getValPercent(1)));
+		val1.setText(String.format("%03.02f",freq.getValPercent(1)));
 		val2.setText(String.format("%03.02f",freq.getValPercent(2)));
 		val3.setText(String.format("%03.02f",freq.getValPercent(3)));
 		val4.setText(String.format("%03.02f",freq.getValPercent(4)));
@@ -455,6 +538,21 @@ public class LevelBuilderPanel extends JPanel {
 //		mul1.setText(String.format("%d",Math.round(freq.getMulPercent(1))));
 //		mul2.setText(String.format("%d",Math.round(freq.getMulPercent(2))));
 //		mul3.setText(String.format("%d",Math.round(freq.getMulPercent(3))));
+	}
+	
+	public void setFrequencyRatio(TileFrequency freq) {
+		oriFreq = freq;
+		
+		val1.setText(String.format("%d",freq.getValPercent(1)));
+		val2.setText(String.format("%d",freq.getValPercent(2)));
+		val3.setText(String.format("%d",freq.getValPercent(3)));
+		val4.setText(String.format("%d",freq.getValPercent(4)));
+		val5.setText(String.format("%d",freq.getValPercent(5)));
+		val6.setText(String.format("%d",freq.getValPercent(6)));
+		
+		mul1.setText(String.format("%d",freq.getMulPercent(1)));
+		mul2.setText(String.format("%d",freq.getMulPercent(2)));
+		mul3.setText(String.format("%d",freq.getMulPercent(3)));
 	}
 	
 	private class FreqFocusListener implements FocusListener {
